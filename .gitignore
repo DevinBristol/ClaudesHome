@@ -1,0 +1,32 @@
+# Sensitive
+.sfdx/
+temp/*
+!temp/.gitkeep
+logs/*
+!logs/.gitkeep
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.sublime-*
+
+# Credentials (just in case)
+*token*
+*credential*
+*.pat
+.env
+.env.local
+
+# Node (if any JS tooling is added later)
+node_modules/
+
+# Salesforce
+.sf/
+.sfdx/
