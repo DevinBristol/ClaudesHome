@@ -96,18 +96,43 @@ git config --global credential.helper store
 Write-Host "  Credential helper configured (credentials will be saved after first use)" -ForegroundColor Green
 
 Write-Host ""
-Write-Host "Step 4: Setting up PowerShell profile..." -ForegroundColor Yellow
+Write-Host "Step 4: Configuring machine paths..." -ForegroundColor Yellow
 
-# Get profile path
+$Hostname = hostname
+Write-Host "  This machine's hostname: $Hostname" -ForegroundColor Cyan
+
+$MachinesJsonPath = Join-Path $ClaudesHomePath "config\machines.json"
+$machinesConfig = Get-Content $MachinesJsonPath -Raw | ConvertFrom-Json
+
+if ($machinesConfig.$Hostname) {
+    Write-Host "  Machine already configured in machines.json" -ForegroundColor Green
+} else {
+    Write-Host "  Adding this PC to machines.json..." -ForegroundColor Gray
+    $machineName = Read-Host "  Enter a name for this PC (e.g., 'Home PC', 'Laptop')"
+
+    $newEntry = [PSCustomObject]@{
+        name = $machineName
+        projectsRoot = $IdeaProjectsPath
+        claudesHome = $ClaudesHomePath
+    }
+
+    $machinesConfig | Add-Member -NotePropertyName $Hostname -NotePropertyValue $newEntry
+    $machinesConfig | ConvertTo-Json -Depth 3 | Set-Content $MachinesJsonPath -Encoding UTF8
+
+    Write-Host "  Added $Hostname to machines.json" -ForegroundColor Green
+    Write-Host "  Don't forget to commit and push this change!" -ForegroundColor Yellow
+}
+
+Write-Host ""
+Write-Host "Step 5: Setting up PowerShell profile..." -ForegroundColor Yellow
+
 $ProfileDir = Split-Path $PROFILE -Parent
 $ProfilePath = $PROFILE
 
-# Create profile directory if needed
 if (-not (Test-Path $ProfileDir)) {
     New-Item -ItemType Directory -Path $ProfileDir -Force | Out-Null
 }
 
-# Profile content to add
 $ProfileContent = @"
 
 # ClaudesHome quick navigation
@@ -115,30 +140,27 @@ function home {
     Set-Location "$ClaudesHomePath"
 }
 
-# Alias for quick sync
-function sync-claude {
-    Push-Location "$ClaudesHomePath"
-    & ".\scripts\setup\sync-repo.ps1"
-    Pop-Location
+# Quick sync (git pull, commit, push)
+function sync {
+    & "$ClaudesHomePath\scripts\sync.ps1"
 }
 "@
 
-# Check if profile exists and if functions already added
 if (Test-Path $ProfilePath) {
     $existingProfile = Get-Content $ProfilePath -Raw
     if ($existingProfile -match "function home") {
         Write-Host "  PowerShell profile already configured" -ForegroundColor Green
     } else {
         Add-Content -Path $ProfilePath -Value $ProfileContent
-        Write-Host "  Added 'home' and 'sync-claude' functions to profile" -ForegroundColor Green
+        Write-Host "  Added 'home' and 'sync' functions to profile" -ForegroundColor Green
     }
 } else {
     Set-Content -Path $ProfilePath -Value $ProfileContent
-    Write-Host "  Created PowerShell profile with 'home' and 'sync-claude' functions" -ForegroundColor Green
+    Write-Host "  Created PowerShell profile with 'home' and 'sync' functions" -ForegroundColor Green
 }
 
 Write-Host ""
-Write-Host "Step 5: Setting up WSL tmux for persistent mobile sessions..." -ForegroundColor Yellow
+Write-Host "Step 6: Setting up WSL tmux for persistent mobile sessions..." -ForegroundColor Yellow
 
 # Check if WSL is available
 $wslList = wsl --list 2>$null
@@ -200,7 +222,7 @@ EOFBASHRC
 }
 
 Write-Host ""
-Write-Host "Step 6: Checking Salesforce org authentication..." -ForegroundColor Yellow
+Write-Host "Step 7: Checking Salesforce org authentication..." -ForegroundColor Yellow
 
 $orgs = sf org list --json 2>$null | ConvertFrom-Json
 
@@ -222,27 +244,32 @@ Write-Host "============================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Next Steps:" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "1. Restart PowerShell for 'home' command to work" -ForegroundColor White
+Write-Host "1. Restart PowerShell for 'home' and 'sync' commands to work" -ForegroundColor White
 Write-Host ""
-Write-Host "2. Copy the server.key file to certs/ folder:" -ForegroundColor White
+Write-Host "2. Commit and push the machines.json change:" -ForegroundColor White
+Write-Host "   cd $ClaudesHomePath" -ForegroundColor Gray
+Write-Host "   sync                    # Or: git add -A && git commit -m 'Add $Hostname' && git push" -ForegroundColor Gray
+Write-Host ""
+Write-Host "3. Copy the server.key file to certs/ folder:" -ForegroundColor White
 Write-Host "   (Get it from your other PC or secure storage)" -ForegroundColor Gray
 Write-Host ""
-Write-Host "3. Authenticate Salesforce production via JWT:" -ForegroundColor White
+Write-Host "4. Authenticate Salesforce production via JWT:" -ForegroundColor White
 Write-Host "   .\scripts\setup\sf-jwt-auth.ps1" -ForegroundColor Gray
 Write-Host ""
-Write-Host "4. Authenticate sandbox orgs (browser login):" -ForegroundColor White
+Write-Host "5. Authenticate sandbox orgs (browser login):" -ForegroundColor White
 Write-Host "   sf org login web -a devin1" -ForegroundColor Gray
 Write-Host "   sf org login web -a PartialCopy" -ForegroundColor Gray
 Write-Host ""
-Write-Host "5. Test the setup:" -ForegroundColor White
+Write-Host "6. Test the setup:" -ForegroundColor White
 Write-Host "   home                    # Navigate to ClaudesHome" -ForegroundColor Gray
 Write-Host "   sf org list             # Verify orgs" -ForegroundColor Gray
 Write-Host "   .\scripts\debug\check-limits.ps1 -Org devin1" -ForegroundColor Gray
 Write-Host ""
-Write-Host "6. For mobile access (Terminus):" -ForegroundColor White
+Write-Host "7. For mobile access (Terminus):" -ForegroundColor White
 Write-Host "   wsl                     # Enter Ubuntu + tmux (persistent session)" -ForegroundColor Gray
 Write-Host "   tm                      # Same thing (shortcut)" -ForegroundColor Gray
 Write-Host "   Ctrl+b d                # Detach from tmux (leave running)" -ForegroundColor Gray
 Write-Host ""
+Write-Host "Machine: $Hostname" -ForegroundColor Cyan
 Write-Host "Project Path: $ClaudesHomePath" -ForegroundColor Cyan
 Write-Host ""
