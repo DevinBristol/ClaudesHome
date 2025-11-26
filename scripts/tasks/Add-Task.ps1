@@ -19,6 +19,9 @@ param(
     [string]$WaitingOn
 )
 
+# Load GitHub token from Doppler
+. "$PSScriptRoot\..\helpers\Load-GH.ps1"
+
 if ($Category -eq "waiting" -and $WaitingOn) {
     $Title = "$Title - waiting on $WaitingOn"
 }

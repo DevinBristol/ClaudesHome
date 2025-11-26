@@ -14,6 +14,9 @@ param(
     [string]$Category
 )
 
+# Load GitHub token from Doppler
+. "$PSScriptRoot\..\helpers\Load-GH.ps1"
+
 $allCategories = @("urgent", "development", "administration", "ideas", "waiting")
 $removeLabels = $allCategories | Where-Object { $_ -ne $Category }
 

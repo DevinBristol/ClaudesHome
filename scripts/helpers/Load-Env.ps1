@@ -1,27 +1,59 @@
 <#
 .SYNOPSIS
-    Loads environment variables from .env file
+    Loads environment variables from Doppler (primary) or .env file (fallback)
 .DESCRIPTION
     Call this at the start of any script that needs API credentials.
     Dot-source it: . .\scripts\helpers\Load-Env.ps1
+
+    Priority:
+    1. Doppler (if available and configured)
+    2. .env file (fallback)
 #>
 
 param(
     [Parameter(Mandatory=$false)]
-    [string]$EnvFile = (Join-Path $PSScriptRoot "..\..\..\.env")
+    [string]$EnvFile = (Join-Path $PSScriptRoot "..\..\..\.env"),
+    [Parameter(Mandatory=$false)]
+    [switch]$ForceDotEnv
 )
 
-# Find .env file relative to ClaudesHome root
 $ClaudesHome = $PSScriptRoot | Split-Path | Split-Path
+
+# Try Doppler first (unless forced to use .env)
+if (-not $ForceDotEnv) {
+    $dopplerAvailable = Get-Command doppler -ErrorAction SilentlyContinue
+    if ($dopplerAvailable) {
+        try {
+            # Check if Doppler is configured for this project
+            $dopplerCheck = doppler secrets --only-names 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                # Load all secrets from Doppler into environment
+                $secrets = doppler secrets download --no-file --format json 2>$null | ConvertFrom-Json
+                if ($secrets) {
+                    $secrets.PSObject.Properties | ForEach-Object {
+                        [Environment]::SetEnvironmentVariable($_.Name, $_.Value, "Process")
+                    }
+                    Write-Host "Environment loaded from Doppler" -ForegroundColor Green
+                    return
+                }
+            }
+        }
+        catch {
+            # Doppler failed, fall through to .env
+        }
+    }
+}
+
+# Fallback to .env file
 $EnvPath = Join-Path $ClaudesHome ".env"
 
 if (-not (Test-Path $EnvPath)) {
-    Write-Host "Warning: .env file not found at $EnvPath" -ForegroundColor Yellow
-    Write-Host "Copy .env.example to .env and fill in your API keys" -ForegroundColor Gray
+    Write-Host "Warning: No Doppler config and .env file not found at $EnvPath" -ForegroundColor Yellow
+    Write-Host "Either run 'doppler setup' or copy .env.example to .env" -ForegroundColor Gray
     return
 }
 
-# Parse and load environment variables
+# Parse and load environment variables from .env
 Get-Content $EnvPath | ForEach-Object {
     $line = $_.Trim()
 

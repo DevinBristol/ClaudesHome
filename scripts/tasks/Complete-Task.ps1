@@ -12,6 +12,9 @@ param(
     [string]$Comment
 )
 
+# Load GitHub token from Doppler
+. "$PSScriptRoot\..\helpers\Load-GH.ps1"
+
 if ($Comment) {
     gh issue close $Number --comment $Comment 2>&1 | Out-Null
 } else {

@@ -16,6 +16,9 @@ param(
     [switch]$Brief
 )
 
+# Load GitHub token from Doppler
+. "$PSScriptRoot\..\helpers\Load-GH.ps1"
+
 $state = if ($All) { "all" } else { "open" }
 
 if ($Category -eq "all") {

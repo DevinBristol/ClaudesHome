@@ -9,4 +9,7 @@ param(
     [int]$Number
 )
 
+# Load GitHub token from Doppler
+. "$PSScriptRoot\..\helpers\Load-GH.ps1"
+
 gh issue view $Number
