@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir \"C:\\Users\\Devin\\IdeaProjects\\ClaudesHome\")",
+      "Bash(dir \"C:\\Users\\Devin\\IdeaProjects\\ClaudesHome\\context\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
