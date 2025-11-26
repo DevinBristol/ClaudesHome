@@ -255,6 +255,58 @@ Devin connects remotely via Terminus app on his phone through Tailscale.
 
 ---
 
+## Cross-PC Remote Repair
+
+If one PC has issues (disk full, WSL broken, SSH down), Claude can SSH from the other PC to fix it.
+
+### PC Connection Info (stored in Doppler)
+
+| PC | Tailscale IP | Windows SSH | WSL SSH |
+|----|--------------|-------------|---------|
+| **Work PC** (desktop-jdd0eek) | `WORKPC_TAILSCALE_IP` | Port 22, user `devin`, pass `WORKPC_WIN_SSH_PASS` | Port 2222, user `devin`, pass `WORKPC_WSL_PASSWORD` |
+| **Home PC** (Devin24) | `HOMEPC_TAILSCALE_IP` | N/A | Port 2222, user `devin`, pass `HOMEPC_WSL_SSH_PASS` |
+
+### Remote Repair Commands
+
+**From any PC with WSL, SSH to another PC:**
+```bash
+# To Work PC (Windows CMD)
+sshpass -p "$(doppler secrets get WORKPC_WIN_SSH_PASS --plain)" ssh -p 22 devin@$(doppler secrets get WORKPC_TAILSCALE_IP --plain) "command"
+
+# To Work PC (WSL)
+sshpass -p "$(doppler secrets get WORKPC_WSL_PASSWORD --plain)" ssh -p 2222 devin@$(doppler secrets get WORKPC_TAILSCALE_IP --plain) "command"
+
+# To Home PC (WSL)
+sshpass -p "$(doppler secrets get HOMEPC_WSL_SSH_PASS --plain)" ssh -p 2222 devin@$(doppler secrets get HOMEPC_TAILSCALE_IP --plain) "command"
+```
+
+### Common Remote Fixes
+
+**Disk full on remote PC:**
+```bash
+# Clean temp files (via Windows SSH)
+ssh ... "del /q/f/s %TEMP%\*"
+# Check free space
+ssh ... "fsutil volume diskfree C:"
+```
+
+**WSL won't start:**
+```bash
+ssh ... "wsl --shutdown"
+ssh ... "wsl --list -v"
+ssh ... "wsl -d Ubuntu"
+```
+
+**SSH service down in WSL:**
+```bash
+ssh ... "wsl -d Ubuntu -u root -- service ssh start"
+```
+
+### Claude Authentication
+Anthropic API key stored in Doppler as `ANTHROPIC_API_KEY` for re-authentication when needed.
+
+---
+
 ## My Priorities
 Devin spends most of his time on:
 1. Salesforce Admin & Development
