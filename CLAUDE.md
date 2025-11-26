@@ -309,6 +309,56 @@ ssh ... "wsl -d Ubuntu -u root -- service ssh start"
 ### Claude Authentication
 Anthropic API key stored in Doppler as `ANTHROPIC_API_KEY` for re-authentication when needed.
 
+### Claude Credentials Sync (Windows ↔ WSL)
+Claude CLI stores credentials in `~/.claude/.credentials.json`. Windows and WSL have separate home directories, so credentials must be synced:
+
+```bash
+# Copy Windows Claude creds to WSL (run in WSL)
+cp /mnt/c/Users/Devin/.claude/.credentials.json ~/.claude/
+```
+
+This is needed when:
+- Happy coder or other tools in WSL need Claude access
+- Claude was authenticated in Windows but not WSL
+
+### Happy Coder Setup (Work PC WSL)
+Happy coder is installed globally in WSL: `/usr/lib/node_modules/happy-coder`
+
+**Config location:** `~/.happy/`
+- `access.key` - Happy cloud authentication
+- `settings.json` - Onboarding status, machine ID
+- `daemon.state.json` - Daemon process info
+
+**Commands:**
+```bash
+happy                    # Start interactive session
+happy -p "prompt"        # Print mode (non-interactive)
+happy auth status        # Check authentication
+happy connect claude     # Connect Anthropic API key
+happy daemon start/stop  # Manage background daemon
+happy doctor             # Diagnostics
+```
+
+### Remote OAuth Authentication Workaround
+Some tools (happy, claude setup-token) need OAuth which redirects to `localhost`. To authenticate remotely:
+
+**From the PC with a browser (e.g., Home PC authenticating Work PC):**
+```bash
+# 1. Create SSH tunnel for OAuth callback
+wsl -d Ubuntu-24.04 -- sshpass -p 'bristol2024' ssh -L 54545:localhost:54545 -p 2222 devin@100.110.31.58 -f -N
+
+# 2. Add Windows port forward to WSL
+netsh interface portproxy add v4tov4 listenport=54545 listenaddress=127.0.0.1 connectport=54545 connectaddress=<WSL_IP>
+
+# 3. Run the OAuth command on remote PC (via SSH)
+ssh ... "happy connect claude"
+
+# 4. Open the OAuth URL in local browser - callback routes through tunnel
+
+# 5. Clean up port forward after
+netsh interface portproxy delete v4tov4 listenport=54545 listenaddress=127.0.0.1
+```
+
 ---
 
 ## My Priorities
