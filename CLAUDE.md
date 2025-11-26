@@ -4,18 +4,38 @@
 ClaudesHome is Devin's universal command center. From here, you help him manage tasks, look up procedures, work on projects, and handle whatever comes up.
 
 ## Project Location
-`C:\Users\Devin\IdeaProjects\ClaudesHome`
+Resolved dynamically from `config/machines.json` based on hostname.
+
+## Path Resolution (Multi-PC Support)
+
+ClaudesHome syncs between multiple PCs with different paths.
+
+### How to resolve paths:
+1. Run `hostname` to get current machine name
+2. Read `config/machines.json`, find entry for that hostname
+3. If not found, check `config/local.json` (local override)
+4. Use `projectsRoot` as base path for all projects
+5. Use `claudesHome` for ClaudesHome path
+
+### Adding a new PC:
+1. Run `hostname` to get machine name
+2. Add entry to `config/machines.json`:
+```json
+"YOUR-HOSTNAME": {
+  "name": "Description",
+  "projectsRoot": "path/to/IdeaProjects",
+  "claudesHome": "path/to/ClaudesHome"
+}
+```
+3. Commit and sync
 
 ## Navigation
-When Devin says `/home`, `go home`, or `home`, interpret that as:
-```
-cd C:\Users\Devin\IdeaProjects\ClaudesHome
-```
+When Devin says `/home`, `go home`, or `home`:
+1. Resolve `claudesHome` path from config
+2. `cd` to that path
 
 When Devin says `sync`:
-```powershell
-.\scripts\sync.ps1
-```
+Run `scripts/sync.ps1` from ClaudesHome directory.
 
 ## Session Start Protocol
 ALWAYS do this when Devin starts a session:
@@ -33,10 +53,11 @@ If yes: `.\scripts\sync.ps1`
 ## Project Navigation
 
 When Devin says "work on [project]" or references a project:
-1. Check `projects/projects.md` to find the project path
-2. Navigate to `C:\Users\Devin\IdeaProjects\[project]`
-3. Check if that project has a `CLAUDE.md` - if so, read it for project-specific instructions
-4. If no local CLAUDE.md, use context from projects.md description
+1. Check `projects/projects.md` to find the project name
+2. Resolve path: `{projectsRoot from config}/{project name}`
+3. Navigate to that path
+4. Check if that project has a `CLAUDE.md` - if so, read it for project-specific instructions
+5. If no local CLAUDE.md, use context from projects.md description
 
 ### Quick Project Shortcuts
 - "work on salesforce" / "sf project" -> `bristol-sf-project`

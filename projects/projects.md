@@ -1,6 +1,7 @@
 # Projects Map
 
 When Devin says "work on [project]", find it here and navigate there.
+Resolve full path: `{projectsRoot from config/machines.json}/{project name}`
 After navigating, check for a local CLAUDE.md for project-specific instructions.
 
 ---

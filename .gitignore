@@ -32,3 +32,6 @@ node_modules/
 # Salesforce
 .sf/
 .sfdx/
+
+# Local config (machine-specific overrides)
+config/local.json
