@@ -30,6 +30,29 @@ If yes: `.\scripts\sync.ps1`
 
 ---
 
+## Project Navigation
+
+When Devin says "work on [project]" or references a project:
+1. Check `projects/projects.md` to find the project path
+2. Navigate to `C:\Users\Devin\IdeaProjects\[project]`
+3. Check if that project has a `CLAUDE.md` - if so, read it for project-specific instructions
+4. If no local CLAUDE.md, use context from projects.md description
+
+### Quick Project Shortcuts
+- "work on salesforce" / "sf project" -> `bristol-sf-project`
+- "check production" / "prod metadata" -> `Production` (read-only)
+- "work on swarm" -> `DevinSwarm`
+- "ai agent" -> `salesforce-ai-agent`
+- "home" -> `ClaudesHome`
+
+### When Working in Another Project
+- You're still aware of ClaudesHome context
+- Can still manage tasks, check SOPs
+- Return with `home` command
+- Sync ClaudesHome if you made changes there
+
+---
+
 ## Task Management
 
 ### Task Categories
