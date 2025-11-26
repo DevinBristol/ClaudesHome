@@ -4,6 +4,10 @@ When Devin says "work on [project]", find it here and navigate there.
 Resolve full path: `{projectsRoot from config/machines.json}/{project name}`
 After navigating, check for a local CLAUDE.md for project-specific instructions.
 
+**📍 PC-Specific Indexes:**
+- **Devin24 (Home PC):** See `projects-devin24.md` for what's actually on this PC
+- **DESKTOP-JDD0EEK (Work PC):** Full project list below
+
 ---
 
 ## Active Projects

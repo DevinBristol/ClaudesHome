@@ -1,17 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git:*)",
-      "Bash(doppler:*)",
-      "Bash(sf org:*)",
-      "Bash(hostname:*)",
-      "Read",
-      "Glob",
-      "Grep",
-      "Bash(cmd.exe /c \"doppler secrets --only-names\")",
-      "Bash(wsl df:*)",
-      "Bash(wsl --list:*)",
-      "Bash(wsl --install Ubuntu-24.04)"
+      "*"
     ],
     "deny": [],
     "defaultMode": "bypassPermissions"

@@ -660,6 +660,25 @@ Each platform needs credentials in Doppler:
 
 ---
 
+## Session Management
+
+See **`docs/session-management.md`** for comprehensive guide on:
+- Starting fresh sessions (new chat / reset context)
+- Resuming existing sessions
+- Switching models (Opus 4.5 is default)
+- Session storage and cleanup
+- Integration between Claude and Happy
+
+**Quick Reference:** `docs/quick-reference-sessions.md`
+
+**Key Commands:**
+- `claude` or `happy` - Start fresh session with Opus 4.5
+- `claude -c` or `happy -c` - Continue last session
+- `/model sonnet` - Switch model mid-session
+- `Ctrl+D` - Exit session
+
+---
+
 ## Reference Files
 - `context/orgs.md` - Detailed org information and purposes
 - `context/current-project.md` - Active work items
@@ -670,3 +689,5 @@ Each platform needs credentials in Doppler:
 - `sops/` - Standard operating procedures (salesforce, five9, it)
 - `scripts/admin/` - Admin module and platform-specific scripts
 - `scripts/auth/` - Authentication/connection scripts
+- `docs/session-management.md` - Session management guide
+- `docs/quick-reference-sessions.md` - Quick session commands
