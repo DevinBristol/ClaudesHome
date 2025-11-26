@@ -1,6 +1,9 @@
 {
   "permissions": {
     "allow": [
+      "Read",
+      "Glob",
+      "Grep",
       "Bash(dir \"C:\\Users\\Devin\\IdeaProjects\\ClaudesHome\")",
       "Bash(dir \"C:\\Users\\Devin\\IdeaProjects\\ClaudesHome\\context\")",
       "Bash(git pull:*)",
