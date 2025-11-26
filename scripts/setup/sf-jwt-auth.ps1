@@ -6,11 +6,11 @@
     authenticate to Salesforce production without a browser.
 .EXAMPLE
     .\sf-jwt-auth.ps1
-    .\sf-jwt-auth.ps1 -Alias prod-jwt
+    .\sf-jwt-auth.ps1 -Alias prod
 #>
 
 param(
-    [Parameter(Mandatory=$false)][string]$Alias = "prod-jwt"
+    [Parameter(Mandatory=$false)][string]$Alias = "prod"
 )
 
 # Load environment

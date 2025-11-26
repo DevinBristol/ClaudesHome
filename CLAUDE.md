@@ -12,7 +12,7 @@ cd C:\Users\Devin\IdeaProjects\ClaudesHome
 ## Org Aliases
 | Alias | Type | Status | Notes |
 |-------|------|--------|-------|
-| **prod-jwt** | Production (DevHub) | Connected via JWT | CAREFUL - always confirm before any changes |
+| **prod** | Production (DevHub) | Connected via JWT | CAREFUL - always confirm before any changes |
 | **PartialCopy** | Partial Copy Sandbox | Connected | Safe for testing with production-like data |
 | **devin1** | Dev Sandbox | Connected | Primary dev sandbox, safe for experimentation |
 | **Devin2** | Dev Sandbox | Connected | Secondary dev sandbox |

@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory=$true)][string]$Path,
-    [Parameter(Mandatory=$false)][string]$ProdOrg = "prod-jwt"
+    [Parameter(Mandatory=$false)][string]$ProdOrg = "prod"
 )
 
 Write-Host "!!! PRODUCTION DEPLOYMENT !!!" -ForegroundColor Red

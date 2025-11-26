@@ -1,7 +1,7 @@
 # Salesforce Org Reference
 
 ## Production
-- **Alias**: prod-jwt
+- **Alias**: prod
 - **Username**: devinobrien17@gmail.com
 - **Org ID**: 00DHs000001vIB2MAM
 - **Type**: Production / DevHub
@@ -76,7 +76,7 @@
 | Quick testing/development | devin1 |
 | Testing with prod-like data | PartialCopy |
 | Isolated feature development | Devin2 or Devin3 |
-| Production deployment | prod-jwt (with validation first!) |
+| Production deployment | prod (with validation first!) |
 
 ## JWT Authentication Setup
 
