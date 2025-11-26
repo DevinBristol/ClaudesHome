@@ -17,12 +17,14 @@ Desktop.ini
 .vscode/
 *.sublime-*
 
-# Credentials (just in case)
-*token*
-*credential*
-*.pat
+# Credentials & Environment
 .env
 .env.local
+.env.*.local
+certs/
+*.pem
+*.key
+*.p12
 
 # Node (if any JS tooling is added later)
 node_modules/
