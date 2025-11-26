@@ -138,7 +138,69 @@ if (Test-Path $ProfilePath) {
 }
 
 Write-Host ""
-Write-Host "Step 5: Checking Salesforce org authentication..." -ForegroundColor Yellow
+Write-Host "Step 5: Setting up WSL tmux for persistent mobile sessions..." -ForegroundColor Yellow
+
+# Check if WSL is available
+$wslList = wsl --list 2>$null
+if ($wslList -match "Ubuntu") {
+    Write-Host "  WSL Ubuntu detected" -ForegroundColor Green
+
+    # Check if tmux is installed
+    $tmuxCheck = wsl -d Ubuntu -e which tmux 2>$null
+    if ($tmuxCheck) {
+        Write-Host "  tmux is installed" -ForegroundColor Green
+
+        # Check if auto-attach is already configured
+        $bashrcCheck = wsl -d Ubuntu -e bash -c "grep -c 'Auto-attach to tmux' ~/.bashrc 2>/dev/null"
+        if ($bashrcCheck -gt 0) {
+            Write-Host "  tmux auto-attach already configured" -ForegroundColor Green
+        } else {
+            Write-Host "  Configuring tmux auto-attach..." -ForegroundColor Gray
+            $tmuxConfig = @'
+wsl -d Ubuntu -e bash -c 'cat >> ~/.bashrc << "EOFBASHRC"
+
+# Auto-attach to tmux session (for persistent mobile sessions)
+if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+    # Try to attach to existing session, or create new one named "main"
+    tmux attach-session -t main 2>/dev/null || tmux new-session -s main
+fi
+EOFBASHRC
+'
+'@
+            Invoke-Expression $tmuxConfig
+            Write-Host "  tmux auto-attach configured" -ForegroundColor Green
+        }
+    } else {
+        Write-Host "  Installing tmux in WSL..." -ForegroundColor Gray
+        wsl -d Ubuntu -e sudo apt-get update
+        wsl -d Ubuntu -e sudo apt-get install -y tmux
+        Write-Host "  tmux installed" -ForegroundColor Green
+    }
+
+    # Create tm.bat shortcut
+    $binPath = Join-Path $env:USERPROFILE "bin"
+    if (-not (Test-Path $binPath)) {
+        New-Item -ItemType Directory -Path $binPath -Force | Out-Null
+    }
+    $tmBat = Join-Path $binPath "tm.bat"
+    if (-not (Test-Path $tmBat)) {
+        Set-Content -Path $tmBat -Value "@echo off`nwsl -d Ubuntu"
+        Write-Host "  Created tm.bat shortcut" -ForegroundColor Green
+
+        # Add to PATH if not already there
+        $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+        if ($userPath -notlike "*$binPath*") {
+            [Environment]::SetEnvironmentVariable("Path", "$userPath;$binPath", "User")
+            Write-Host "  Added bin folder to PATH" -ForegroundColor Green
+        }
+    }
+} else {
+    Write-Host "  WSL Ubuntu not found - skipping tmux setup" -ForegroundColor Yellow
+    Write-Host "  (Mobile persistence via tmux requires WSL with Ubuntu)" -ForegroundColor Gray
+}
+
+Write-Host ""
+Write-Host "Step 6: Checking Salesforce org authentication..." -ForegroundColor Yellow
 
 $orgs = sf org list --json 2>$null | ConvertFrom-Json
 
@@ -171,6 +233,11 @@ Write-Host "3. Test the setup:" -ForegroundColor White
 Write-Host "   home                    # Navigate to ClaudesHome" -ForegroundColor Gray
 Write-Host "   sf org list             # Verify orgs" -ForegroundColor Gray
 Write-Host "   .\scripts\debug\check-limits.ps1 -Org devin1" -ForegroundColor Gray
+Write-Host ""
+Write-Host "4. For mobile access (Terminus):" -ForegroundColor White
+Write-Host "   wsl                     # Enter Ubuntu + tmux (persistent session)" -ForegroundColor Gray
+Write-Host "   tm                      # Same thing (shortcut)" -ForegroundColor Gray
+Write-Host "   Ctrl+b d                # Detach from tmux (leave running)" -ForegroundColor Gray
 Write-Host ""
 Write-Host "Project Path: $ClaudesHomePath" -ForegroundColor Cyan
 Write-Host ""

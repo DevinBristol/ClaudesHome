@@ -27,6 +27,25 @@ When Devin says `/home`, `go home`, or `home`, interpret that as:
 cd C:\Users\Devin\IdeaProjects\ClaudesHome
 ```
 
+## Mobile Access (Terminus + tmux)
+Devin connects remotely via Terminus app on his phone through Tailscale. To maintain persistent sessions that survive connection drops:
+
+**WSL Ubuntu has tmux auto-attach configured.** When Devin types `wsl`, he automatically enters a tmux session called "main".
+
+### If Devin connects from mobile:
+1. He'll SSH into this PC via Tailscale
+2. Type `wsl` to enter Ubuntu + tmux
+3. If connection drops, just reconnect and type `wsl` - session is preserved
+
+### Useful tmux commands:
+| Command | Action |
+|---------|--------|
+| `wsl` | Enter Ubuntu + auto-attach tmux |
+| `tm` | Same as wsl (shortcut) |
+| `Ctrl+b d` | Detach (leave session running) |
+| `tmux ls` | List sessions |
+| `tmux kill-session -t main` | Kill session (start fresh) |
+
 ## Key Commands Reference
 ```powershell
 # Authentication

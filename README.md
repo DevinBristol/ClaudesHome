@@ -74,7 +74,36 @@ ClaudesHome/
 | devin1 | Dev Sandbox | Primary development |
 | Devin2/3 | Dev Sandbox | Secondary development |
 
+## Mobile Access (Terminus + tmux)
+
+For persistent sessions when connecting from phone via Terminus:
+
+```bash
+# After SSH into PC via Tailscale
+wsl                          # Enter Ubuntu + auto-attach tmux
+# or
+tm                           # Same thing (shortcut)
+
+# If connection drops, just reconnect and run wsl again
+# Your session is preserved exactly where you left off
+```
+
+**tmux Commands:**
+| Command | Action |
+|---------|--------|
+| `Ctrl+b d` | Detach (leave session running) |
+| `tmux ls` | List sessions |
+| `tmux kill-session -t main` | Kill session (start fresh) |
+
 ## Setting Up on New PC
+
+**Option 1: Run the setup script (recommended)**
+```powershell
+# Run in PowerShell as Administrator
+irm https://raw.githubusercontent.com/DevinBristol/ClaudesHome/main/scripts/setup/setup-second-pc.ps1 | iex
+```
+
+**Option 2: Manual setup**
 
 1. Clone the repo:
    ```powershell
@@ -93,6 +122,15 @@ ClaudesHome/
    sf org login web -a BristolProd
    sf org login web -a devin1
    # etc.
+   ```
+
+4. Set up tmux (if using WSL Ubuntu):
+   ```bash
+   wsl -d Ubuntu
+   # Add to ~/.bashrc:
+   # if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+   #     tmux attach-session -t main 2>/dev/null || tmux new-session -s main
+   # fi
    ```
 
 ## License
