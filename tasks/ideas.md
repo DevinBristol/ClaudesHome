@@ -4,7 +4,7 @@ Potential projects, someday/maybe, things to explore.
 
 <!-- Format: - [ ] [DATE] Idea description -->
 
-- [ ] [2025-11-25] **Multi-PC task sync via GitHub Issues** - Use `gh issue` CLI for real-time task sync between PCs. Labels: urgent, development, administration, ideas, waiting. Commands: `gh issue list --label dev`, `gh issue create --title "X" --label urgent`, `gh issue close <num>`. Can pivot to Notion later if needed.
+- [x] [2025-11-25] **Multi-PC task sync via GitHub Issues** - DEPLOYED 2025-11-26. Scripts in `scripts/tasks/`. Labels created.
 
 ## ClaudesHome Setup Fixes (2025-11-26 audit)
 

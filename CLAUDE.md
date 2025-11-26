@@ -74,63 +74,67 @@ When Devin says "work on [project]" or references a project:
 
 ---
 
-## Task Management
+## Task Management (GitHub Issues)
 
-### Task Categories
-- **urgent.md** - Do today, time-sensitive, fires to put out
-- **development.md** - Coding, Salesforce dev, technical projects
-- **administration.md** - Admin work, IT tasks, Five9, routine stuff
-- **ideas.md** - The bin: potential projects, someday/maybe, things to explore
-- **waiting.md** - Blocked on someone/something else
-- **done.md** - Completed tasks (for reference)
+Tasks sync across PCs via GitHub Issues - no manual sync needed.
 
-### Adding Tasks
-When Devin says "add to my list" or "remind me to" or "I need to":
-1. Determine the right category (ask if unclear)
-2. Add to appropriate file with today's date
-3. Format: `- [ ] [DATE] Task description`
+### Task Categories (Labels)
+| Label | Color | Use for |
+|-------|-------|---------|
+| **urgent** | Red | Do today, time-sensitive |
+| **development** | Blue | Coding, Salesforce dev, technical |
+| **administration** | Purple | Admin work, IT, Five9 |
+| **ideas** | Yellow | Someday/maybe, the bin |
+| **waiting** | Light blue | Blocked on someone |
+
+### Scripts (`scripts/tasks/`)
+```powershell
+# Add a task
+.\scripts\tasks\Add-Task.ps1 "Fix login bug" development
+.\scripts\tasks\Add-Task.ps1 "Call Cameron" urgent
+.\scripts\tasks\Add-Task.ps1 "Explore AI tools" ideas
+.\scripts\tasks\Add-Task.ps1 "Get API key" waiting -WaitingOn "Cameron"
+
+# View tasks
+.\scripts\tasks\Get-Tasks.ps1              # Summary of all categories
+.\scripts\tasks\Get-Tasks.ps1 urgent       # Just urgent
+.\scripts\tasks\Get-Tasks.ps1 -Brief       # Counts only
+
+# Complete a task
+.\scripts\tasks\Complete-Task.ps1 42
+.\scripts\tasks\Complete-Task.ps1 42 -Comment "Deployed"
+
+# Move between categories
+.\scripts\tasks\Move-Task.ps1 42 urgent    # Make it urgent
+
+# View details
+.\scripts\tasks\Show-Task.ps1 42
+```
+
+### Quick gh Commands
+```powershell
+gh issue list --label urgent              # List urgent tasks
+gh issue create --title "X" --label dev   # Quick add
+gh issue close 42                         # Complete
+gh issue view 42                          # Details
+```
+
+### Natural Language Mappings
+When Devin says -> Do this:
+- "add to my list" / "remind me to" -> `Add-Task.ps1`
+- "what's on my plate" / "my tasks" -> `Get-Tasks.ps1`
+- "what's urgent" -> `Get-Tasks.ps1 urgent`
+- "dev tasks" -> `Get-Tasks.ps1 development`
+- "done with #42" -> `Complete-Task.ps1 42`
+- "make #42 urgent" -> `Move-Task.ps1 42 urgent`
+- "waiting on X for Y" -> `Add-Task.ps1 "Y" waiting -WaitingOn "X"`
 
 Category hints:
-- "urgent", "asap", "today", "fire" -> urgent.md
-- "build", "code", "fix bug", "deploy", "apex" -> development.md
-- "password reset", "Five9", "admin", "IT" -> administration.md
-- "idea", "maybe", "someday", "thinking about", "potential" -> ideas.md
-- "waiting on", "blocked", "need X from Y" -> waiting.md
-
-### Checking Tasks
-When Devin asks "what's on my plate" or "my tasks":
-- Start with urgent.md (anything here?)
-- Then summarize development.md and administration.md counts
-- Don't mention ideas.md unless asked
-
-Specific views:
-- "what's urgent" -> just urgent.md
-- "dev tasks" -> just development.md
-- "admin tasks" -> just administration.md
-- "my ideas" or "the bin" -> ideas.md
-
-### Completing Tasks
-When Devin says "done with X" or "finished X":
-- Find the task in any category
-- Move to done.md with completion date
-- Format: `- [x] [COMPLETED] Task (from [CATEGORY], added [ORIGINAL DATE])`
-
-### Promoting/Moving Tasks
-- "make X urgent" -> move to urgent.md
-- "this is a dev task" -> move to development.md
-- Note the move: `- [ ] [DATE] Task (moved from [CATEGORY])`
-
-### Waiting/Blocked
-When Devin says "waiting on X for Y":
-- Add to waiting.md with who/what we're waiting on
-- Format: `- [ ] [DATE] Task - waiting on [PERSON/THING]`
-
----
-
-## Quick Capture (Inbox)
-When Devin dumps a request quickly ("got a text about X", "Cameron needs Y"):
-- Add to inbox/capture.md with timestamp
-- Ask if he wants to act on it now or just capture it
+- "urgent", "asap", "today", "fire" -> urgent
+- "build", "code", "fix bug", "deploy", "apex" -> development
+- "password reset", "Five9", "admin", "IT" -> administration
+- "idea", "maybe", "someday", "potential" -> ideas
+- "waiting on", "blocked", "need X from Y" -> waiting
 
 ---
 

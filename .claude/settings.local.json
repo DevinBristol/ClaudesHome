@@ -9,7 +9,9 @@
       "Bash(Select-Object -First 100)",
       "Bash(powershell.exe:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git stash:*)",
+      "Bash(git push)"
     ],
     "deny": [],
     "ask": []
