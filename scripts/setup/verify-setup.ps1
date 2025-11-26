@@ -15,7 +15,13 @@ param(
     [switch]$TestConnections
 )
 
-$DopplerExe = 'C:\Users\Devin\AppData\Local\Microsoft\WinGet\Packages\Doppler.doppler_Microsoft.Winget.Source_8wekyb3d8bbwe\doppler.exe'
+# Auto-detect Doppler path
+$DopplerExe = (Get-Command doppler -ErrorAction SilentlyContinue).Source
+if (-not $DopplerExe) {
+    $wingetPath = "$env:LOCALAPPDATA\Microsoft\WinGet\Packages"
+    $DopplerExe = Get-ChildItem $wingetPath -Filter "doppler.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
+}
+if (-not $DopplerExe) { $DopplerExe = 'doppler' }
 
 Write-Host ""
 Write-Host "=== ClaudesHome Integration Verification ===" -ForegroundColor Cyan

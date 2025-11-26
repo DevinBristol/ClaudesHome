@@ -9,8 +9,13 @@
     Credentials are managed through Doppler for secure secrets management.
 #>
 
-# Doppler executable path
-$script:DopplerExe = 'C:\Users\Devin\AppData\Local\Microsoft\WinGet\Packages\Doppler.doppler_Microsoft.Winget.Source_8wekyb3d8bbwe\doppler.exe'
+# Auto-detect Doppler path
+$script:DopplerExe = (Get-Command doppler -ErrorAction SilentlyContinue).Source
+if (-not $script:DopplerExe) {
+    $wingetPath = "$env:LOCALAPPDATA\Microsoft\WinGet\Packages"
+    $script:DopplerExe = Get-ChildItem $wingetPath -Filter "doppler.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
+}
+if (-not $script:DopplerExe) { $script:DopplerExe = 'doppler' }
 
 # Get script root for importing other scripts
 $script:ModuleRoot = $PSScriptRoot
@@ -22,6 +27,11 @@ Get-ChildItem "$script:ModuleRoot\..\auth\*.ps1" -ErrorAction SilentlyContinue |
 
 # Import all admin scripts (except this module)
 Get-ChildItem "$script:ModuleRoot\*-admin.ps1" -ErrorAction SilentlyContinue | ForEach-Object {
+    . $_.FullName
+}
+
+# Import helper scripts
+Get-ChildItem "$script:ModuleRoot\..\helpers\*.ps1" -ErrorAction SilentlyContinue | ForEach-Object {
     . $_.FullName
 }
 
@@ -492,3 +502,6 @@ Export-ModuleMember -Function Get-GoogleOrgUnits
 Export-ModuleMember -Function Move-GoogleUserToOU
 Export-ModuleMember -Function Get-GoogleUserLicenses
 Export-ModuleMember -Function Get-GoogleLicenses
+
+# Helper functions
+Export-ModuleMember -Function Send-ClaudeResponse

@@ -3,8 +3,13 @@
     Connects to Microsoft Graph and Exchange Online using Doppler secrets
 #>
 
-# Doppler executable path
-$script:DopplerExe = 'C:\Users\Devin\AppData\Local\Microsoft\WinGet\Packages\Doppler.doppler_Microsoft.Winget.Source_8wekyb3d8bbwe\doppler.exe'
+# Auto-detect Doppler path
+$script:DopplerExe = (Get-Command doppler -ErrorAction SilentlyContinue).Source
+if (-not $script:DopplerExe) {
+    $wingetPath = "$env:LOCALAPPDATA\Microsoft\WinGet\Packages"
+    $script:DopplerExe = Get-ChildItem $wingetPath -Filter "doppler.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
+}
+if (-not $script:DopplerExe) { $script:DopplerExe = 'doppler' }
 
 function Get-DopplerSecret {
     param([Parameter(Mandatory)][string]$Name)

@@ -266,6 +266,13 @@ Devin spends most of his time on:
 - Just do things when the intent is clear
 - Ask for clarification only when genuinely needed
 
+### Mobile Sessions (Terminus)
+When Devin is on mobile and a response is long/hard to read:
+- He may say "email that", "send that to me", or "email me that"
+- Use `Send-ClaudeResponse` to email the response to him
+- Example: `Send-ClaudeResponse -Content $previousResponse -Subject "Query Results"`
+- Requires MS365 connection and DEVIN_EMAIL in Doppler
+
 ---
 
 ## Safety Rules

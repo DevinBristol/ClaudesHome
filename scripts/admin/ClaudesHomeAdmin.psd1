@@ -90,6 +90,9 @@
         'Add-CompanyCamComment',
         'Sync-CompanyCamData',
 
+        # Helpers
+        'Send-ClaudeResponse',
+
         # Google
         'Get-GoogleUsers',
         'Get-GoogleUser',
