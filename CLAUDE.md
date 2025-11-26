@@ -369,6 +369,180 @@ Only suggest things that are:
 
 ---
 
+## System Administration
+
+ClaudesHome is configured for cross-platform system administration with unified access to Five9, Microsoft 365, Salesforce, Company Cam, and Google Workspace.
+
+### Secrets Management
+All API credentials are stored in **Doppler** (project: `claudeshome`, config: `prd`).
+- Never ask for or display passwords from Doppler
+- To view secrets: `doppler secrets` (from ClaudesHome directory)
+- To set a secret: `doppler secrets set SECRET_NAME="value"`
+
+### Loading the Admin Module
+```powershell
+Import-Module "C:\Users\Devin\IdeaProjects\ClaudesHome\scripts\admin\ClaudesHomeAdmin.psd1"
+```
+
+### Quick Commands
+
+**Connect to platforms:**
+```powershell
+Connect-AllPlatforms                    # All platforms
+Connect-AllPlatforms -Platforms @("Five9", "Salesforce")  # Specific ones
+Get-ConnectionStatus                    # Check what's connected
+```
+
+**Unified User Management:**
+```powershell
+# Create user across platforms
+New-UniversalUser -FirstName "John" -LastName "Doe" -Email "john@company.com" `
+    -Platforms @("MS365", "Google", "Salesforce")
+
+# Create user including Five9 agent
+New-UniversalUser -FirstName "Jane" -LastName "Smith" -Email "jane@company.com" -IsFive9Agent
+
+# Disable user everywhere (offboarding)
+Disable-UniversalUser -Email "john@company.com"
+
+# Reset passwords across platforms
+Reset-UniversalPassword -Email "john@company.com" -Platforms @("MS365", "Google")
+Reset-UniversalPassword -Email "john@company.com" -SamePassword  # Use same password everywhere
+```
+
+**Five9 Specific:**
+```powershell
+Get-Five9Users
+New-Five9Agent -FirstName "Susan" -LastName "Smith" -Email "susan@company.com"
+Reset-Five9UserPassword -Username "susan@company.com"
+Disable-Five9User -Username "susan@company.com"
+
+# Campaigns
+Get-Five9Campaigns
+Start-Five9Campaign -Name "Outbound Sales"
+Stop-Five9Campaign -Name "Outbound Sales"
+
+# ANI/DNIS Management
+Get-Five9ANIs
+Set-Five9ANIStatus -ANI "8005551234" -Campaign "Sales" -Status Active
+
+# Skills
+Get-Five9Skills
+Add-Five9UserSkill -Username "susan@company.com" -SkillName "Sales"
+```
+
+**Microsoft 365:**
+```powershell
+Get-MS365Users
+Get-MS365User -UserPrincipalName "john@company.com"
+New-MS365User -DisplayName "John Doe" -UserPrincipalName "john@company.com" -MailNickname "johnd"
+Reset-MS365UserPassword -UserPrincipalName "john@company.com"
+Disable-MS365User -UserPrincipalName "john@company.com"
+
+# Groups
+Get-MS365Groups
+Get-MS365GroupMembers -GroupId "group-id"
+Add-MS365GroupMember -GroupId "group-id" -UserId "user-id"
+```
+
+**Salesforce:**
+```powershell
+Get-SalesforceUsers -ActiveOnly
+Get-SalesforceUser -Email "john@company.com"
+Invoke-SalesforceQuery -Query "SELECT Id, Name FROM Account LIMIT 10"
+Get-SalesforceProfiles
+Get-SalesforceOrgLimits  # Shows limits above 75% usage
+```
+
+**Company Cam (Hybrid - Reads direct, Writes via Salesforce):**
+```powershell
+# READ operations (direct API)
+Get-CompanyCamProjects
+Get-CompanyCamProject -ProjectId "abc123"
+Search-CompanyCamProjects -Query "Main St"
+Get-CompanyCamPhotos -ProjectId "abc123"
+Get-CompanyCamComments -PhotoId "xyz789"
+Get-CompanyCamUsers
+
+# WRITE operations (via Salesforce proxy - requires CompanyCamProxy Apex class)
+New-CompanyCamProject -Name "123 Main St Roof" -StreetAddress "123 Main St" -City "Lincoln" -State "NE"
+Add-CompanyCamComment -PhotoId "abc123" -Content "Needs follow-up"
+Update-CompanyCamProject -ProjectId "abc123" -Status "completed"
+
+# Data reconciliation
+Sync-CompanyCamData -SalesforceObjectName "CompanyCam_Project__c" -ExternalIdField "CC_Project_Id__c" -DryRun
+```
+
+**Google Workspace:**
+```powershell
+Get-GoogleUsers
+Get-GoogleUser -User "john@company.com"
+New-GoogleUser -PrimaryEmail "john@company.com" -GivenName "John" -FamilyName "Doe"
+Reset-GoogleUserPassword -User "john@company.com"
+Suspend-GoogleUser -User "john@company.com"
+Resume-GoogleUser -User "john@company.com"
+
+# Groups
+Get-GoogleGroups
+Get-GoogleGroupMembers -Group "sales@company.com"
+Add-GoogleGroupMember -GroupEmail "sales@company.com" -MemberEmail "john@company.com" -Role "MEMBER"
+
+# Org Units
+Get-GoogleOrgUnits
+Move-GoogleUserToOU -User "john@company.com" -OrgUnitPath "/Sales"
+```
+
+### Natural Language Mappings
+When Devin says -> Do this:
+- "reset [name]'s password" -> Reset-UniversalPassword for that user
+- "disable [name]" or "offboard [name]" -> Disable-UniversalUser
+- "new employee [name]" -> New-UniversalUser
+- "Five9 password reset for [name]" -> Reset-Five9UserPassword
+- "activate ANI [number]" -> Set-Five9ANIStatus -Status Active
+- "start [campaign] campaign" -> Start-Five9Campaign
+- "Company Cam project for [address]" -> New-CompanyCamProject
+- "add comment to photo" -> Add-CompanyCamComment
+- "show Company Cam projects" -> Get-CompanyCamProjects
+- "sync Company Cam data" -> Sync-CompanyCamData
+
+### Platform Setup Status
+To verify all integrations are configured:
+```powershell
+.\scripts\setup\verify-setup.ps1
+```
+
+### Configuring Credentials
+Each platform needs credentials in Doppler:
+
+**Five9:**
+- `FIVE9_USERNAME` - Admin email
+- `FIVE9_PASSWORD` - Admin password
+- `FIVE9_DATACENTER` - US, EU, etc.
+
+**Microsoft 365:**
+- `MS365_TENANT_ID` - Azure AD tenant ID
+- `MS365_CLIENT_ID` - App registration client ID
+- `MS365_CLIENT_SECRET` - Client secret (or use cert)
+- `MS365_CERT_THUMBPRINT` - Certificate thumbprint (optional)
+
+**Salesforce:**
+- `SF_CLIENT_ID` - Connected App consumer key
+- `SF_USERNAME` - Admin username
+- `SF_INSTANCE_URL` - Instance URL
+- `SF_PRIVATE_KEY_PATH` - Path to JWT private key
+
+**Company Cam:**
+- `COMPANYCAM_ACCESS_TOKEN` - Read-only API token
+- `COMPANYCAM_MODE` - Set to "hybrid"
+
+**Google Workspace:**
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL` - Service account email
+- `GOOGLE_ADMIN_EMAIL` - Admin to impersonate
+- `GOOGLE_CREDENTIALS_PATH` - Path to service account JSON
+- `GOOGLE_CUSTOMER_ID` - Customer ID (or "my_customer")
+
+---
+
 ## Reference Files
 - `context/orgs.md` - Detailed org information and purposes
 - `context/current-project.md` - Active work items
@@ -377,3 +551,5 @@ Only suggest things that are:
 - `context/tools.md` - Tools and access available
 - `projects/projects.md` - Map of all repos and projects
 - `sops/` - Standard operating procedures (salesforce, five9, it)
+- `scripts/admin/` - Admin module and platform-specific scripts
+- `scripts/auth/` - Authentication/connection scripts
