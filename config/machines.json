@@ -1,6 +1,11 @@
 {
   "DESKTOP-JDD0EEK": {
-    "name": "Work PC",
+    "name": "Work PC (Primary)",
+    "projectsRoot": "C:\\Users\\Devin\\IdeaProjects",
+    "claudesHome": "C:\\Users\\Devin\\IdeaProjects\\ClaudesHome"
+  },
+  "Devin24": {
+    "name": "Work PC (Secondary)",
     "projectsRoot": "C:\\Users\\Devin\\IdeaProjects",
     "claudesHome": "C:\\Users\\Devin\\IdeaProjects\\ClaudesHome"
   }
