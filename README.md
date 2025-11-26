@@ -1,138 +1,85 @@
 # ClaudesHome
 
-A synchronized Salesforce development environment designed to work across multiple PCs with Claude CLI assistance.
+Universal command center for managing tasks, Salesforce development, and procedures across multiple PCs.
 
 ## Quick Start
 
 ```powershell
-# Navigate to ClaudesHome
-home  # (PowerShell alias)
-
-# Or directly
-cd C:\Users\Devin\IdeaProjects\ClaudesHome
-
-# Sync before starting
-.\scripts\setup\sync-repo.ps1
+home    # Navigate to ClaudesHome
+sync    # Pull, commit, push in one command
 ```
 
 ## Structure
 
 ```
 ClaudesHome/
-├── scripts/
-│   ├── data/           # Data export, query, bulk operations
-│   ├── debug/          # Log tailing, anonymous Apex, limits
-│   ├── deploy/         # Sandbox and production deployments
-│   └── setup/          # Auth refresh, repo sync
-├── context/
-│   ├── orgs.md         # Org aliases and details
-│   ├── current-project.md
-│   ├── common-queries.md
-│   ├── field-reference.md
-│   └── procedures.md
-├── logs/               # Deployment logs (gitignored)
-├── temp/               # Temporary files (gitignored)
-├── CLAUDE.md           # Instructions for Claude
-└── README.md
+├── tasks/              # Task management
+│   ├── urgent.md       # Do today
+│   ├── development.md  # Coding, SF dev
+│   ├── administration.md # Admin, IT, Five9
+│   ├── ideas.md        # Someday/maybe
+│   ├── waiting.md      # Blocked tasks
+│   └── done.md         # Completed
+├── inbox/
+│   └── capture.md      # Quick dump
+├── sops/               # Standard Operating Procedures
+│   ├── salesforce/
+│   ├── five9/
+│   └── it/
+├── projects/
+│   └── projects.md     # Map of repos
+├── context/            # Reference info
+│   ├── orgs.md         # Salesforce orgs
+│   ├── tools.md        # Available tools
+│   └── ...
+├── scripts/            # Automation
+│   ├── data/           # SOQL, exports
+│   ├── debug/          # Logs, limits
+│   ├── deploy/         # Deployments
+│   └── setup/          # Auth, setup
+├── meta/               # Self-improvement
+│   ├── usage-patterns.md
+│   └── improvement-ideas.md
+├── notes/              # Meeting notes, etc.
+└── CLAUDE.md           # Claude instructions
 ```
 
-## Common Commands
+## Task Commands (to Claude)
 
-### Data
-```powershell
-.\scripts\data\query.ps1 -Query "SELECT Id, Name FROM Account LIMIT 10" -Org devin1
-.\scripts\data\count-records.ps1 -SObject Account -Org devin1
-.\scripts\data\export-records.ps1 -Query "SELECT..." -Org devin1
+```
+"urgent: [task]"        # Add urgent task
+"dev task: [task]"      # Add dev task
+"admin task: [task]"    # Add admin task
+"idea: [thought]"       # Add to ideas bin
+"what's urgent"         # Show urgent tasks
+"what's on my plate"    # Summary of all
+"done with [task]"      # Mark complete
 ```
 
-### Debugging
-```powershell
-.\scripts\debug\tail-logs.ps1 -Org devin1
-.\scripts\debug\run-apex.ps1 -Code "System.debug('test');" -Org devin1
-.\scripts\debug\check-limits.ps1 -Org devin1
-```
+## Salesforce Orgs
 
-### Deployment
-```powershell
-.\scripts\deploy\quick-deploy.ps1 -Path force-app -Org devin1
-.\scripts\deploy\validate-prod.ps1 -Path force-app
-.\scripts\deploy\deploy-prod.ps1 -Path force-app  # Requires confirmation
-```
+| Alias | Type | Notes |
+|-------|------|-------|
+| prod | Production | JWT auth, BE CAREFUL |
+| devin1 | Dev Sandbox | Primary dev |
+| Devin2/3 | Dev Sandbox | Secondary |
+| uat-jwt | Partial Copy | Testing |
 
-### Setup
-```powershell
-.\scripts\setup\refresh-auth.ps1 -Org devin1
-.\scripts\setup\sync-repo.ps1
-```
+## Mobile Access
 
-## Org Aliases
-
-| Alias | Type | Use For |
-|-------|------|---------|
-| BristolProd | Production | Final deployments only |
-| PartialCopy | Partial Copy | Testing with prod-like data |
-| devin1 | Dev Sandbox | Primary development |
-| Devin2/3 | Dev Sandbox | Secondary development |
-
-## Mobile Access (Terminus + tmux)
-
-For persistent sessions when connecting from phone via Terminus:
-
+SSH via Tailscale, then:
 ```bash
-# After SSH into PC via Tailscale
-wsl                          # Enter Ubuntu + auto-attach tmux
-# or
-tm                           # Same thing (shortcut)
-
-# If connection drops, just reconnect and run wsl again
-# Your session is preserved exactly where you left off
+wsl    # Auto-attaches tmux session
 ```
 
-**tmux Commands:**
-| Command | Action |
-|---------|--------|
-| `Ctrl+b d` | Detach (leave session running) |
-| `tmux ls` | List sessions |
-| `tmux kill-session -t main` | Kill session (start fresh) |
+## Second PC Setup
 
-## Setting Up on New PC
-
-**Option 1: Run the setup script (recommended)**
 ```powershell
-# Run in PowerShell as Administrator
-irm https://raw.githubusercontent.com/DevinBristol/ClaudesHome/main/scripts/setup/setup-second-pc.ps1 | iex
+cd ~\IdeaProjects
+git clone https://github.com/DevinBristol/ClaudesHome.git
+# Add to PowerShell profile:
+# function home { Set-Location "C:\Users\<User>\IdeaProjects\ClaudesHome" }
+# function sync { & "C:\Users\<User>\IdeaProjects\ClaudesHome\scripts\sync.ps1" }
 ```
 
-**Option 2: Manual setup**
-
-1. Clone the repo:
-   ```powershell
-   cd C:\Users\<YourUser>\IdeaProjects
-   git clone https://github.com/DevinBristol/ClaudesHome.git
-   ```
-
-2. Add `home` alias to PowerShell profile:
-   ```powershell
-   notepad $PROFILE
-   # Add: function home { cd "C:\Users\<YourUser>\IdeaProjects\ClaudesHome" }
-   ```
-
-3. Authenticate Salesforce orgs:
-   ```powershell
-   sf org login web -a BristolProd
-   sf org login web -a devin1
-   # etc.
-   ```
-
-4. Set up tmux (if using WSL Ubuntu):
-   ```bash
-   wsl -d Ubuntu
-   # Add to ~/.bashrc:
-   # if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-   #     tmux attach-session -t main 2>/dev/null || tmux new-session -s main
-   # fi
-   ```
-
-## License
-
-Private repository - personal use only.
+Then authenticate Salesforce orgs: `sf org login web -a <alias>`

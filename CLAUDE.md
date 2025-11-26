@@ -174,11 +174,8 @@ Run from ClaudesHome directory:
 - `.\scripts\deploy\deploy-prod.ps1 -Path force-app` - Deploy to production (requires confirmation)
 
 ### Setup Scripts
-- `.\scripts\setup\sync-repo.ps1` - Git pull/push helper
 - `.\scripts\setup\refresh-auth.ps1 -Org devin1` - Re-authenticate org
 - `.\scripts\setup\refresh-auth.ps1 -All` - Check all org connections
-
-### Sync Script
 - `.\scripts\sync.ps1` - One-command git sync (pull, commit, push)
 
 ---
@@ -333,6 +330,6 @@ Only suggest things that are:
 - `context/current-project.md` - Active work items
 - `context/common-queries.md` - Frequently used SOQL
 - `context/field-reference.md` - Important objects and fields
-- `context/procedures.md` - Step-by-step guides for common tasks
 - `context/tools.md` - Tools and access available
 - `projects/projects.md` - Map of all repos and projects
+- `sops/` - Standard operating procedures (salesforce, five9, it)
