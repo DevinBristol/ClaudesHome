@@ -224,17 +224,22 @@ Write-Host "Next Steps:" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "1. Restart PowerShell for 'home' command to work" -ForegroundColor White
 Write-Host ""
-Write-Host "2. Authenticate your Salesforce orgs:" -ForegroundColor White
-Write-Host "   sf org login web -a BristolProd" -ForegroundColor Gray
+Write-Host "2. Copy the server.key file to certs/ folder:" -ForegroundColor White
+Write-Host "   (Get it from your other PC or secure storage)" -ForegroundColor Gray
+Write-Host ""
+Write-Host "3. Authenticate Salesforce production via JWT:" -ForegroundColor White
+Write-Host "   .\scripts\setup\sf-jwt-auth.ps1" -ForegroundColor Gray
+Write-Host ""
+Write-Host "4. Authenticate sandbox orgs (browser login):" -ForegroundColor White
 Write-Host "   sf org login web -a devin1" -ForegroundColor Gray
 Write-Host "   sf org login web -a PartialCopy" -ForegroundColor Gray
 Write-Host ""
-Write-Host "3. Test the setup:" -ForegroundColor White
+Write-Host "5. Test the setup:" -ForegroundColor White
 Write-Host "   home                    # Navigate to ClaudesHome" -ForegroundColor Gray
 Write-Host "   sf org list             # Verify orgs" -ForegroundColor Gray
 Write-Host "   .\scripts\debug\check-limits.ps1 -Org devin1" -ForegroundColor Gray
 Write-Host ""
-Write-Host "4. For mobile access (Terminus):" -ForegroundColor White
+Write-Host "6. For mobile access (Terminus):" -ForegroundColor White
 Write-Host "   wsl                     # Enter Ubuntu + tmux (persistent session)" -ForegroundColor Gray
 Write-Host "   tm                      # Same thing (shortcut)" -ForegroundColor Gray
 Write-Host "   Ctrl+b d                # Detach from tmux (leave running)" -ForegroundColor Gray

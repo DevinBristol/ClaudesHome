@@ -1,11 +1,12 @@
 # Salesforce Org Reference
 
 ## Production
-- **Alias**: BristolProd
+- **Alias**: prod-jwt
 - **Username**: devinobrien17@gmail.com
 - **Org ID**: 00DHs000001vIB2MAM
 - **Type**: Production / DevHub
-- **Status**: Connected
+- **Status**: Connected via JWT
+- **Auth Method**: JWT Bearer Flow (Connected App: bristol-sf-project)
 - **Notes**: Primary production org. Exercise extreme caution with any changes.
 
 ## Sandboxes
@@ -75,4 +76,13 @@
 | Quick testing/development | devin1 |
 | Testing with prod-like data | PartialCopy |
 | Isolated feature development | Devin2 or Devin3 |
-| Production deployment | BristolProd (with validation first!) |
+| Production deployment | prod-jwt (with validation first!) |
+
+## JWT Authentication Setup
+
+To authenticate on a new machine:
+```powershell
+.\scripts\setup\sf-jwt-auth.ps1
+```
+
+This requires the `certs/server.key` file (copy from another machine or secure storage).

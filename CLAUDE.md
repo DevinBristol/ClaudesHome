@@ -12,7 +12,7 @@ cd C:\Users\Devin\IdeaProjects\ClaudesHome
 ## Org Aliases
 | Alias | Type | Status | Notes |
 |-------|------|--------|-------|
-| **BristolProd** | Production (DevHub) | Connected | CAREFUL - always confirm before any changes |
+| **prod-jwt** | Production (DevHub) | Connected via JWT | CAREFUL - always confirm before any changes |
 | **PartialCopy** | Partial Copy Sandbox | Connected | Safe for testing with production-like data |
 | **devin1** | Dev Sandbox | Connected | Primary dev sandbox, safe for experimentation |
 | **Devin2** | Dev Sandbox | Connected | Secondary dev sandbox |
@@ -20,6 +20,11 @@ cd C:\Users\Devin\IdeaProjects\ClaudesHome
 | **Developing** | Sandbox | Connected | Additional sandbox |
 | **myDevOrg** | Scratch Org | Connected | Ephemeral dev environment |
 | **FullCopy** | Full Copy Sandbox | **Inactive** | Needs re-authentication |
+
+## JWT Authentication
+Production uses JWT auth via Connected App "bristol-sf-project".
+- Consumer Key and private key stored in ClaudesHome (certs/ folder, gitignored)
+- To re-authenticate on a new PC, run: `.\scripts\setup\sf-jwt-auth.ps1`
 
 ## Navigation
 When Devin says `/home`, `go home`, or `home`, interpret that as:
