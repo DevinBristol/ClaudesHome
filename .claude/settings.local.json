@@ -1,53 +1,19 @@
 {
   "permissions": {
     "allow": [
+      "Bash(git:*)",
+      "Bash(doppler:*)",
+      "Bash(sf org:*)",
+      "Bash(hostname:*)",
       "Read",
       "Glob",
       "Grep",
-      "Edit",
-      "Write",
-      "Task",
-      "WebFetch",
-      "WebSearch",
-      "Bash(git:*)",
-      "Bash(gh:*)",
-      "Bash(sf:*)",
-      "Bash(dir:*)",
-      "Bash(ls:*)",
-      "Bash(cd:*)",
-      "Bash(cat:*)",
-      "Bash(type:*)",
-      "Bash(hostname:*)",
-      "Bash(doppler:*)",
-      "Bash(npm:*)",
-      "Bash(node:*)",
-      "Bash(powershell.exe:*)",
-      "Bash(pwsh:*)",
-      "Bash(Get-:*)",
-      "Bash(Set-:*)",
-      "Bash(New-:*)",
-      "Bash(Import-Module:*)",
-      "Bash(Test-:*)",
-      "Bash(Invoke-:*)",
-      "Bash(mkdir:*)",
-      "Bash(copy:*)",
-      "Bash(move:*)",
-      "Bash(echo:*)"
+      "Bash(cmd.exe /c \"doppler secrets --only-names\")",
+      "Bash(wsl df:*)",
+      "Bash(wsl --list:*)",
+      "Bash(wsl --install Ubuntu-24.04)"
     ],
-    "deny": [
-      "Bash(rm -rf:*)",
-      "Bash(Remove-Item -Recurse -Force C:\\:*)",
-      "Bash(format:*)",
-      "Bash(del /s /q:*)"
-    ],
-    "ask": [
-      "Bash(sf project deploy start -o prod:*)",
-      "Bash(sf project deploy start --target-org prod:*)",
-      "Write(.env:*)",
-      "Write(**/credentials*)",
-      "Write(**/secrets*)",
-      "Write(**/*.key)",
-      "Write(**/*.pem)"
-    ]
+    "deny": [],
+    "defaultMode": "bypassPermissions"
   }
 }
