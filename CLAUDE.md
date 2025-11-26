@@ -237,18 +237,22 @@ When he references a project, check this file to find the path.
 ## Mobile Access (Terminus + tmux)
 Devin connects remotely via Terminus app on his phone through Tailscale.
 
-**WSL Ubuntu has tmux auto-attach configured.** When Devin types `wsl`, he automatically enters a tmux session called "main".
+**WSL Ubuntu has tmux auto-attach configured.** SSH directly into WSL on port 2222 and tmux auto-attaches.
 
-### If Devin connects from mobile:
-1. He'll SSH into this PC via Tailscale
-2. Type `wsl` to enter Ubuntu + tmux
-3. If connection drops, just reconnect and type `wsl` - session is preserved
+### SSH Commands for Terminus
+
+| Target | Command |
+|--------|---------|
+| **Home PC WSL** | `ssh -p 2222 devin@100.125.164.128` |
+| **Work PC Windows** | `ssh -p 22 devin@100.110.31.58` |
+| **Work PC WSL** | `ssh -p 2222 devin@100.110.31.58` |
+
+### If connection drops:
+Just reconnect - tmux session is preserved. You'll auto-attach to your existing session.
 
 ### Useful tmux commands:
 | Command | Action |
 |---------|--------|
-| `wsl` | Enter Ubuntu + auto-attach tmux |
-| `tm` | Same as wsl (shortcut) |
 | `Ctrl+b d` | Detach (leave session running) |
 | `tmux ls` | List sessions |
 | `tmux kill-session -t main` | Kill session (start fresh) |
